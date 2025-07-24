@@ -1,7 +1,18 @@
-import { Controller, Get, Param, NotFoundException, Patch, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  NotFoundException,
+  Patch,
+  Body,
+  UseGuards,
+  Post,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { PagesService } from './pages.service';
 import { AuthGuard } from '@nestjs/passport';
 import { UpdateBlockDto } from './dto/update-block.dto';
+import { exec } from 'child_process';
 
 @Controller('pages')
 export class PagesController {
@@ -28,5 +39,18 @@ export class PagesController {
       throw new NotFoundException('Página ou Bloco não encontrado para atualização.');
     }
     return updatedPage.blocks.find((b) => String(b._id) === blockId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('publish/:slug')
+  publishPage(@Param('slug') slug: string) {
+    exec(`node ../scripts/build-page.js ${slug}`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Erro ao publicar página ${slug}:`, stderr);
+        throw new InternalServerErrorException('Falha ao publicar página.');
+      }
+      console.log(`Página ${slug} publicada com sucesso:`, stdout);
+    });
+    return { message: `Publicação da página '${slug}' iniciada.` };
   }
 }

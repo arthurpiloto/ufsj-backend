@@ -12,7 +12,7 @@ import { PagesModule } from './pages/pages.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'public') }),
+    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'dist') }),
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({

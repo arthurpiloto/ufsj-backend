@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Site da Pró-Reitoria de Ensino de Graduação da Universidade Federal de São João del-Rei (PROEN UFSJ)">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@govbr-ds/core@3.6.1/dist/core.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@govbr-ds/core@3.6.1/dist/core.min.js"></script>
+    <script type="module" src="../js/script.js" defer></script>
+    <link rel="shortcut icon" href="https://ufsj.edu.br/temaversao5/imagens/ufsj-favicon.png" type="image/png">
+    <title>
+        <%= page.title %> | UFSJ
+    </title>
+</head>
+
+<body>
+
+    <header class="br-header large" data-sticky="data-sticky">
+    </header>
+
+    <main class="d-flex flex-fill p-5" id="main">
+        <div class="container-fluid d-flex">
+            <div class="row flex-fill">
+                <div class="br-menu push active col-sm-4 col-lg-3 px-0" id="main-navigation">
+                </div>
+
+                <div class="col-9">
+                    <div class="main-content d-flex flex-column pl-3 mt-4 text-up-01">
+
+                        <h1 class="mb-1">
+                            <%= page.title %>
+                        </h1>
+
+                        <%# Filtramos os blocos por tipo para renderizar em seções separadas %>
+                            <% const editaisUFSJ=page.blocks.filter(b=> b.type === 'edital-ufsj'); %>
+                                <% const editaisSESU=page.blocks.filter(b=> b.type === 'edital-sesu'); %>
+                                    <% const legislacao=page.blocks.filter(b=> b.type === 'legislacao'); %>
+
+                                        <% if (editaisUFSJ.length> 0) { %>
+                                            <div class="editais ufsj-editais d-flex flex-column">
+                                                <h4 class="m-0 text-weight-regular">Editais UFSJ</h4>
+                                                <div class="edital-container d-flex flex-column">
+                                                    <% editaisUFSJ.sort((a,b)=> a.order - b.order).forEach(block => { %>
+                                                        <span>
+                                                            <a href="<%= block.content.url %>" target="_blank">
+                                                                <%= block.content.text %>
+                                                            </a>
+                                                            - (publicado em <%= new
+                                                                Date(block.content.date).toLocaleDateString('pt-BR') %>)
+                                                        </span>
+                                                        <% }); %>
+                                                </div>
+                                            </div>
+                                            <% } %>
+
+                                                <% if (editaisSESU.length> 0) { %>
+                                                    <div class="editais sesu-ediais d-flex flex-column">
+                                                        <h4 class="m-0 text-weight-regular">Editais SESU/MEC</h4>
+                                                        <% editaisSESU.sort((a,b)=> a.order - b.order).forEach(block =>
+                                                            { %>
+                                                            <span>
+                                                                <a href="<%= block.content.url %>" target="_blank">
+                                                                    <%= block.content.text %>
+                                                                </a>
+                                                            </span>
+                                                            <% }); %>
+                                                    </div>
+                                                    <% } %>
+
+                                                        <% if (legislacao.length> 0) { %>
+                                                            <div class="editais d-flex flex-column">
+                                                                <h4 class="m-0 text-weight-regular">Legislação</h4>
+                                                                <% legislacao.sort((a,b)=> a.order -
+                                                                    b.order).forEach(block => { %>
+                                                                    <span>
+                                                                        <a href="<%= block.content.url %>">
+                                                                            <%= block.content.text %>
+                                                                        </a>
+                                                                        <span class="text-down-01">
+                                                                            <%= block.content.description %>
+                                                                        </span>
+                                                                    </span>
+                                                                    <% }); %>
+                                                            </div>
+                                                            <% } %>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="br-footer inverted">
+    </footer>
+
+</body>
+
+</html>
