@@ -1,56 +1,50 @@
-import {
-  Controller,
-  Get,
-  Param,
-  NotFoundException,
-  Patch,
-  Body,
-  UseGuards,
-  Post,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards } from '@nestjs/common';
 import { PagesService } from './pages.service';
+import { CreatePageDto } from './dto/create-page.dto';
+import { UpdatePageDto } from './dto/update-page.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { UpdateBlockDto } from './dto/update-block.dto';
-import { exec } from 'child_process';
 
-@Controller('pages')
+@Controller()
 export class PagesController {
   constructor(private readonly pagesService: PagesService) {}
 
-  @Get(':slug')
-  async findBySlug(@Param('slug') slug: string) {
-    const page = await this.pagesService.findBySlug(slug);
-    if (!page) {
-      throw new NotFoundException(`Página com slug "${slug}" não encontrada.`);
-    }
-    return page;
+  @Get('pages/:slug')
+  findBySlug(@Param('slug') slug: string) {
+    return this.pagesService.findBySlug(slug);
+  }
+
+  @Get('pages-slugs')
+  findAllSlugs() {
+    return this.pagesService.findAllSlugs();
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Patch(':pageId/blocks/:blockId')
-  async updateBlock(
-    @Param('pageId') pageId: string,
-    @Param('blockId') blockId: string,
-    @Body() updateBlockDto: UpdateBlockDto,
-  ) {
-    const updatedPage = await this.pagesService.updateBlock(pageId, blockId, updateBlockDto);
-    if (!updatedPage) {
-      throw new NotFoundException('Página ou Bloco não encontrado para atualização.');
-    }
-    return updatedPage.blocks.find((b) => String(b._id) === blockId);
+  @Post('cms/pages')
+  create(@Body() createPageDto: CreatePageDto) {
+    return this.pagesService.create(createPageDto);
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post('publish/:slug')
-  publishPage(@Param('slug') slug: string) {
-    exec(`node ../scripts/build-page.js ${slug}`, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Erro ao publicar página ${slug}:`, stderr);
-        throw new InternalServerErrorException('Falha ao publicar página.');
-      }
-      console.log(`Página ${slug} publicada com sucesso:`, stdout);
-    });
-    return { message: `Publicação da página '${slug}' iniciada.` };
+  @Get('cms/pages')
+  findAllForCms() {
+    return this.pagesService.findAllForCms();
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('cms/pages/:id')
+  findById(@Param('id') id: string) {
+    return this.pagesService.findById(id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Put('cms/pages/:id')
+  update(@Param('id') id: string, @Body() updatePageDto: UpdatePageDto) {
+    return this.pagesService.update(id, updatePageDto);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Delete('cms/pages/:id')
+  remove(@Param('id') id: string) {
+    return this.pagesService.remove(id);
   }
 }
