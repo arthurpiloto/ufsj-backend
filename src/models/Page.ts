@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { IPage } from '../types/page';
 
 const AnnexSchema: Schema = new Schema({

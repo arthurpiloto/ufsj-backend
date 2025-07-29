@@ -8,9 +8,9 @@ export const register = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const user = new User({ email, password });
     await user.save();
-    res.status(201).send({ message: 'Utilizador registado com sucesso!' });
+    res.status(201).send({ message: 'Usuário registado com sucesso!' });
   } catch (error: any) {
-    res.status(400).send({ error: 'Erro ao registar utilizador.', details: error.message });
+    res.status(400).send({ error: 'Erro ao registar usuário.', details: error.message });
   }
 };
 
