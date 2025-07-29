@@ -1,11 +1,11 @@
-import dotenv from 'dotenv';
-import express, { Application } from 'express';
+import dotenv = require('dotenv');
+import express = require('express');
 import mongoose from 'mongoose';
-import cors from 'cors';
+import cors = require('cors');
 import authRoutes from './routes/authRoutes';
 import pageRoutes from './routes/pageRoutes';
 
-const app: Application = express();
+const app = express();
 const dbUrl = process.env.DATABASE_URL;
 
 dotenv.config();
