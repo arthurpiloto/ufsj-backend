@@ -5,10 +5,10 @@ import cors = require('cors');
 import authRoutes from './routes/authRoutes';
 import pageRoutes from './routes/pageRoutes';
 
-const app = express();
+dotenv.config();
 const dbUrl = process.env.DATABASE_URL;
 
-dotenv.config();
+const app = express();
 app.use(cors());
 app.use(express.json());
 
